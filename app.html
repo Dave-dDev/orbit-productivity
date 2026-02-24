@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Orbit Productivity — your all-in-one workspace for tasks, focus, notes, and habits."
+    />
+    <title>Orbit Productivity</title>
+    <link rel="stylesheet" href="app.css" />
+    <!-- SVG Gradient defs inline so it's always available -->
+    <style>
+      /* Inline SVG gradient for timer ring */
+      .timer-gradient-defs {
+        position: absolute;
+        width: 0;
+        height: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">🌀</div>
+        <span class="logo-text">Orbit</span>
+      </div>
+
+      <ul class="nav-section">
+        <li class="nav-section-label">Menu</li>
+        <li
+          class="nav-item active"
+          data-page="dashboard"
+          id="nav-dashboard"
+          aria-label="Dashboard"
+        >
+          <span class="nav-icon">⚡</span>
+          <span class="nav-label">Dashboard</span>
+        </li>
+        <li
+          class="nav-item"
+          data-page="tasks"
+          id="nav-tasks"
+          aria-label="Tasks"
+        >
+          <span class="nav-icon">✅</span>
+          <span class="nav-label">Tasks</span>
+          <span class="nav-badge" id="badge-tasks">0</span>
+        </li>
+        <li
+          class="nav-item"
+          data-page="pomodoro"
+          id="nav-pomodoro"
+          aria-label="Pomodoro"
+        >
+          <span class="nav-icon">🍅</span>
+          <span class="nav-label">Pomodoro</span>
+        </li>
+        <li
+          class="nav-item"
+          data-page="notes"
+          id="nav-notes"
+          aria-label="Notes"
+        >
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Notes</span>
+        </li>
+        <li
+          class="nav-item"
+          data-page="habits"
+          id="nav-habits"
+          aria-label="Habits"
+        >
+          <span class="nav-icon">🔥</span>
+          <span class="nav-label">Habits</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-card" id="user-card">
+          <div class="user-avatar" id="user-avatar-initial">U</div>
+          <div class="user-info">
+            <div class="user-name" id="sidebar-user-name">User</div>
+            <div class="user-role">Productivity Pro</div>
+          </div>
+        </div>
+        <button
+          class="theme-toggle"
+          id="theme-toggle-btn"
+          aria-label="Toggle theme"
+        >
+          <span class="theme-toggle-icon" id="theme-icon">🌙</span>
+          <span class="nav-label" id="theme-label">Light Mode</span>
+        </button>
+        <button
+          class="theme-toggle"
+          id="logout-btn"
+          aria-label="Sign out"
+          style="color:var(--rose);border-color:rgba(244,63,94,0.2);margin-top:4px"
+        >
+          <span style="font-size:16px;width:20px;display:flex;align-items:center;justify-content:center">🚪</span>
+          <span class="nav-label">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ══════════════════════════════════════ -->
+    <main class="content">
+      <!-- ── DASHBOARD ──────────────────────────────────────── -->
+      <section
+        class="page active"
+        id="page-dashboard"
+        aria-labelledby="dash-heading"
+      >
+        <div class="dashboard-greeting">
+          <div class="greeting-text" id="greeting-text">
+            Good morning,
+            <span class="name-highlight" id="user-name-display">there</span> 👋
+          </div>
+          <p class="greeting-sub" id="greeting-sub">
+            Here's what's on your plate today.
+          </p>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-grid">
+          <div class="stat-card teal">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="dash-tasks-left">0</div>
+            <div class="stat-label">Tasks left today</div>
+          </div>
+          <div class="stat-card violet">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="dash-habits-done">0</div>
+            <div class="stat-label">Habits completed</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-icon">🍅</div>
+            <div class="stat-value" id="dash-sessions">0</div>
+            <div class="stat-label">Focus sessions</div>
+          </div>
+          <div class="stat-card rose">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value" id="dash-streak">0</div>
+            <div class="stat-label">Best streak</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Left: Quick add + recent tasks -->
+          <div>
+            <div class="dash-section-title">
+              <span>Today's Tasks</span>
+              <a href="#" data-page="tasks" class="dash-link">View all →</a>
+            </div>
+            <div class="quick-task-form">
+              <input
+                class="input-field"
+                id="quick-task-input"
+                placeholder="Add a quick task…"
+              />
+              <button class="btn btn-primary btn-sm" id="quick-task-btn">
+                ＋ Add
+              </button>
+            </div>
+            <div class="recent-tasks" id="recent-tasks-list">
+              <!-- populated by JS -->
+            </div>
+          </div>
+
+          <!-- Right panel -->
+          <div class="dash-right">
+            <!-- Habit check-in -->
+            <div class="habit-today-card">
+              <div class="dash-section-title" style="margin-bottom: 12px">
+                <span>Today's Habits</span>
+                <a href="#" data-page="habits" class="dash-link">Edit →</a>
+              </div>
+              <div id="dash-habits-list">
+                <div class="empty-state" style="padding: 20px">
+                  <div class="empty-icon">🌱</div>
+                  <p>No habits yet.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weekly chart -->
+            <div class="chart-container">
+              <div class="dash-section-title" style="margin-bottom: 0">
+                <span>Task Completions (7 days)</span>
+              </div>
+              <div class="bar-chart" id="weekly-chart"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TASKS ───────────────────────────────────────────── -->
+      <section class="page" id="page-tasks" aria-labelledby="tasks-heading">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="tasks-heading">Tasks</h1>
+            <p class="page-subtitle">Manage your to-dos and priorities</p>
+          </div>
+        </div>
+
+        <!-- Add form -->
+        <div class="task-add-form" id="task-add-form">
+          <div class="input-group" style="min-width: 200px">
+            <input
+              class="input-field"
+              id="task-title-input"
+              placeholder="New task title…"
+              maxlength="80"
+            />
+          </div>
+          <div class="input-group">
+            <select class="input-field" id="task-priority-input">
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <input class="input-field" id="task-due-input" type="date" />
+          </div>
+          <div class="input-group">
+            <input
+              class="input-field"
+              id="task-category-input"
+              placeholder="Category (opt.)"
+              maxlength="20"
+            />
+          </div>
+          <button class="btn btn-primary" id="task-add-btn">＋ Add Task</button>
+        </div>
+
+        <!-- Filters -->
+        <div
+          class="task-filters"
+          style="margin-bottom: 20px"
+          id="task-filter-bar"
+        >
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="today">Today</button>
+          <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+          <button class="filter-btn" data-filter="done">Completed</button>
+          <button class="filter-btn" data-filter="high">🔴 High</button>
+        </div>
+
+        <div class="task-list" id="task-list">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── POMODORO ────────────────────────────────────────── -->
+      <section class="page" id="page-pomodoro" aria-labelledby="pomo-heading">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="pomo-heading">Pomodoro Timer</h1>
+            <p class="page-subtitle">Focus in sprints, rest intentionally</p>
+          </div>
+        </div>
+        <div class="pomodoro-container">
+          <!-- Main timer -->
+          <div class="pomodoro-main">
+            <!-- Mode selector -->
+            <div class="mode-tabs">
+              <div class="mode-tab active" data-mode="work" id="mode-work">
+                Work
+              </div>
+              <div class="mode-tab" data-mode="short" id="mode-short">
+                Short Break
+              </div>
+              <div class="mode-tab" data-mode="long" id="mode-long">
+                Long Break
+              </div>
+            </div>
+
+            <!-- Ring -->
+            <div class="timer-ring-wrap">
+              <svg class="timer-ring" viewBox="0 0 240 240">
+                <defs>
+                  <linearGradient
+                    id="timerGrad"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stop-color="#00d4aa" />
+                    <stop offset="100%" stop-color="#7c3aed" />
+                  </linearGradient>
+                </defs>
+                <circle class="timer-ring-bg" cx="120" cy="120" r="110" />
+                <circle
+                  class="timer-ring-fg"
+                  id="timer-ring-fg"
+                  cx="120"
+                  cy="120"
+                  r="110"
+                />
+              </svg>
+              <div class="timer-center">
+                <div class="timer-display" id="timer-display">25:00</div>
+                <div class="timer-mode-label" id="timer-mode-label">
+                  Work Session
+                </div>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="timer-controls">
+              <button class="timer-btn-sec" id="timer-reset-btn" title="Reset">
+                ↺
+              </button>
+              <button class="timer-btn-main" id="timer-start-btn" title="Start">
+                ▶
+              </button>
+              <button class="timer-btn-sec" id="timer-skip-btn" title="Skip">
+                ⏭
+              </button>
+            </div>
+
+            <!-- Session dots -->
+            <div class="session-indicator" id="session-dots">
+              <div class="session-dot"></div>
+              <div class="session-dot"></div>
+              <div class="session-dot"></div>
+              <div class="session-dot"></div>
+            </div>
+
+            <p style="font-size: 12px; color: var(--text-2)">
+              Session <span id="session-count-display">1</span> of 4
+            </p>
+          </div>
+
+          <!-- Right: Stats + Settings -->
+          <div class="pomodoro-stats">
+            <div class="pomo-stat-card">
+              <div class="pomo-stat-val" id="pomo-today-sessions">0</div>
+              <div class="pomo-stat-lbl">Sessions today</div>
+            </div>
+            <div class="pomo-stat-card">
+              <div class="pomo-stat-val" id="pomo-total-minutes">0m</div>
+              <div class="pomo-stat-lbl">Focus time today</div>
+            </div>
+            <div class="pomodoro-settings">
+              <div class="settings-title">Timer Settings (min)</div>
+              <div class="settings-grid">
+                <div class="input-group">
+                  <label class="input-label">Work</label>
+                  <input
+                    class="input-field"
+                    id="setting-work"
+                    type="number"
+                    value="25"
+                    min="1"
+                    max="90"
+                  />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Short Break</label>
+                  <input
+                    class="input-field"
+                    id="setting-short"
+                    type="number"
+                    value="5"
+                    min="1"
+                    max="30"
+                  />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Long Break</label>
+                  <input
+                    class="input-field"
+                    id="setting-long"
+                    type="number"
+                    value="15"
+                    min="1"
+                    max="60"
+                  />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Sessions/Round</label>
+                  <input
+                    class="input-field"
+                    id="setting-sessions"
+                    type="number"
+                    value="4"
+                    min="2"
+                    max="8"
+                  />
+                </div>
+              </div>
+              <button
+                class="btn btn-ghost btn-sm"
+                id="apply-settings-btn"
+                style="margin-top: 14px; width: 100%"
+              >
+                Apply Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── NOTES ───────────────────────────────────────────── -->
+      <section class="page" id="page-notes" aria-labelledby="notes-heading">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="notes-heading">Notes</h1>
+            <p class="page-subtitle">
+              Capture ideas, thoughts, and inspiration
+            </p>
+          </div>
+          <button class="btn btn-primary" id="add-note-btn">＋ New Note</button>
+        </div>
+
+        <div class="notes-header">
+          <div class="notes-search">
+            <div class="notes-search-inner">
+              <span class="search-icon">🔍</span>
+              <input
+                class="input-field"
+                id="note-search"
+                placeholder="Search notes…"
+              />
+            </div>
+          </div>
+          <div class="task-filters" id="note-tag-filters">
+            <button class="filter-btn active" data-tag="all">All</button>
+            <button class="filter-btn" data-tag="work">Work</button>
+            <button class="filter-btn" data-tag="personal">Personal</button>
+            <button class="filter-btn" data-tag="idea">Ideas</button>
+            <button class="filter-btn" data-tag="pinned">📌 Pinned</button>
+          </div>
+        </div>
+        <div class="notes-grid" id="notes-grid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── HABITS ─────────────────────────────────────────── -->
+      <section class="page" id="page-habits" aria-labelledby="habits-heading">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="habits-heading">Habits</h1>
+            <p class="page-subtitle">Build streaks, track daily progress</p>
+          </div>
+        </div>
+        <div class="habits-container">
+          <!-- Habit list -->
+          <div class="habit-list-section">
+            <p class="habit-section-title">Today's Habits</p>
+            <div class="habit-list" id="habit-list">
+              <!-- populated by JS -->
+            </div>
+          </div>
+
+          <!-- Add habit form -->
+          <div class="habit-add-card" style="position: sticky; top: 24px">
+            <h3>Add New Habit</h3>
+            <div class="input-group" style="margin-bottom: 12px">
+              <label class="input-label">Habit name</label>
+              <input
+                class="input-field"
+                id="habit-name-input"
+                placeholder="e.g. Morning run"
+                maxlength="50"
+              />
+            </div>
+            <div class="input-group" style="margin-bottom: 16px">
+              <label class="input-label">Icon (emoji)</label>
+              <input
+                class="input-field"
+                id="habit-icon-input"
+                placeholder="🏃"
+                maxlength="2"
+              />
+            </div>
+            <button
+              class="btn btn-primary"
+              style="width: 100%"
+              id="add-habit-btn"
+            >
+              ＋ Add Habit
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══ NOTE MODAL ════════════════════════════════════════ -->
+    <div
+      class="note-add-modal"
+      id="note-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="note-add-inner">
+        <h2 class="modal-title" id="modal-title">New Note</h2>
+        <div class="input-group">
+          <label class="input-label">Title</label>
+          <input
+            class="input-field"
+            id="note-title-input"
+            placeholder="Note title…"
+            maxlength="60"
+          />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Content</label>
+          <textarea
+            class="input-field"
+            id="note-content-input"
+            placeholder="Write your thoughts…"
+            rows="5"
+            style="resize: vertical; line-height: 1.6"
+          ></textarea>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Tag</label>
+          <select class="input-field" id="note-tag-input">
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="idea">Idea</option>
+            <option value="">No tag</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Color</label>
+          <div class="color-picker" id="note-color-picker">
+            <div class="color-dot default selected" data-color="default"></div>
+            <div class="color-dot teal" data-color="teal"></div>
+            <div class="color-dot violet" data-color="violet"></div>
+            <div class="color-dot amber" data-color="amber"></div>
+            <div class="color-dot rose" data-color="rose"></div>
+            <div class="color-dot sky" data-color="sky"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="note-cancel-btn">Cancel</button>
+          <button class="btn btn-primary" id="note-save-btn">Save Note</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ USER NAME MODAL ═══════════════════════════════════ -->
+    <div class="note-add-modal" id="name-modal" role="dialog" aria-modal="true">
+      <div class="note-add-inner" style="max-width: 380px; text-align: center">
+        <div style="font-size: 48px; margin-bottom: 8px">🌀</div>
+        <h2 class="modal-title">Welcome to Orbit</h2>
+        <p style="color: var(--text-2); font-size: 13px; margin-bottom: 4px">
+          What should we call you?
+        </p>
+        <input
+          class="input-field"
+          id="name-input"
+          placeholder="Your name…"
+          maxlength="30"
+          style="text-align: center; font-size: 16px"
+        />
+        <div
+          class="modal-footer"
+          style="justify-content: center; margin-top: 8px"
+        >
+          <button
+            class="btn btn-primary"
+            id="name-save-btn"
+            style="min-width: 140px"
+          >
+            Let's go ✨
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TOAST CONTAINER ════════════════════════════════════ -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

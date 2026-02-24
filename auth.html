@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sign in to Orbit Productivity — your all-in-one workspace." />
+  <title>Orbit — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+
+  <!-- Animated background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Theme toggle -->
+  <button class="top-theme-btn" id="top-theme-btn" aria-label="Toggle theme">🌙</button>
+
+  <main class="auth-container">
+    <div class="auth-card" id="auth-card">
+
+      <!-- Brand -->
+      <div class="auth-brand">
+        <div class="brand-icon">🌀</div>
+        <span class="brand-name">Orbit</span>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="tab-login"    role="tab" aria-selected="true"  data-tab="login">Sign In</button>
+        <button class="auth-tab"        id="tab-register" role="tab" aria-selected="false" data-tab="register">Create Account</button>
+      </div>
+
+      <!-- ── LOGIN PANEL ── -->
+      <div class="auth-panel active" id="panel-login">
+        <p class="auth-subtitle">Welcome back! Sign in to continue.</p>
+
+        <div class="field-group">
+          <label class="field-label" for="login-username">Username</label>
+          <div class="field-wrap">
+            <span class="field-icon">👤</span>
+            <input class="field-input" id="login-username" type="text" placeholder="Your name" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="login-password">Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input class="field-input" id="login-password" type="password" placeholder="Your password" autocomplete="current-password" />
+            <button class="toggle-pw" id="toggle-login-pw" type="button" aria-label="Show password">👁</button>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember-me" />
+            <span>Remember me (30 days)</span>
+          </label>
+          <button class="link-btn" id="forgot-pw-btn" type="button">Forgot password?</button>
+        </div>
+
+        <div class="auth-error" id="login-error"></div>
+        <button class="auth-btn" id="login-btn">Sign In →</button>
+        <p class="auth-switch">Don't have an account? <button class="link-btn" data-tab="register">Create one</button></p>
+      </div>
+
+      <!-- ── REGISTER PANEL ── -->
+      <div class="auth-panel" id="panel-register">
+        <p class="auth-subtitle">Join Orbit. Start building better habits today.</p>
+
+        <div class="field-group">
+          <label class="field-label" for="reg-name">Username</label>
+          <div class="field-wrap">
+            <span class="field-icon">👤</span>
+            <input class="field-input" id="reg-name" type="text" placeholder="Choose a username" maxlength="40" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="reg-password">Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input class="field-input" id="reg-password" type="password" placeholder="At least 8 characters" autocomplete="new-password" />
+            <button class="toggle-pw" id="toggle-reg-pw" type="button" aria-label="Show password">👁</button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <span class="strength-label" id="strength-label"></span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="reg-confirm">Confirm Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input class="field-input" id="reg-confirm" type="password" placeholder="Repeat password" autocomplete="new-password" />
+          </div>
+        </div>
+
+        <div class="auth-error" id="reg-error"></div>
+        <button class="auth-btn" id="register-btn">Create Account →</button>
+        <p class="auth-switch">Already have an account? <button class="link-btn" data-tab="login">Sign in</button></p>
+      </div>
+
+    </div>
+
+    <!-- Forgot-password modal -->
+    <div class="forgot-modal" id="forgot-modal">
+      <div class="forgot-inner">
+        <h3>Reset Password</h3>
+        <p>Enter your username. A temporary password will be shown here — copy it and sign in, then update it.</p>
+        <div class="field-wrap" style="margin:14px 0">
+          <span class="field-icon">👤</span>
+          <input class="field-input" id="reset-username" type="text" placeholder="Your username" />
+        </div>
+        <div class="new-pw-box" id="new-pw-box" style="display:none"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+          <button class="auth-btn-ghost" id="forgot-cancel-btn">Cancel</button>
+          <button class="auth-btn" id="forgot-submit-btn" style="width:auto;padding:10px 20px">Reset</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="auth.js"></script>
+</body>
+</html>
