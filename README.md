@@ -122,6 +122,5 @@ Or open `auth.html` directly — register an account and you're in.
 
 ---
 
-## 📄 License
 
-MIT © [Dave-dDev](https://github.com/Dave-dDev)
+© [Dave-dDev](https://github.com/Dave-dDev)
